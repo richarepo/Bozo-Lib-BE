@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 import dbConnection from '../db/connection'
 
+export interface User extends Document {
+  email: string;
+  password: string;
+}
 
 const userSchema = new mongoose.Schema(
   {
@@ -12,4 +16,4 @@ const userSchema = new mongoose.Schema(
     }
   }, { timestamps: true });
 
-export const userCollection = dbConnection.model('user', userSchema, 'user');
+export const userCollection = dbConnection.model<User>('user', userSchema, 'user');

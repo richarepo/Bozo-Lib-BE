@@ -10,6 +10,7 @@ module.exports = {
     "overrides": [
     ],
     "parser": "@typescript-eslint/parser",
+    
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
@@ -18,5 +19,6 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-    }
+        "@typescript-eslint/no-explicit-any": "off"
+    }      
 }

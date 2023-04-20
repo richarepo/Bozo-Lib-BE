@@ -7,7 +7,7 @@ import mainRoute from "./routes/index";
 app.use(express.json());
 app.use("/", mainRoute);
 
-dbConnection.once('open', (err, db) => {
+dbConnection.once('open', (err) => {
   if (err) throw err;
 });
 
