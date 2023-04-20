@@ -12,11 +12,8 @@ const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunctio
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
-  jwt.verify(token, "secret", async (err, decoded: JwtPayload | string) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-    if (typeof decoded === "string") {
+  jwt.verify(token, "secret", async (err: any, decoded: JwtPayload | string) => {
+    if (err || !decoded || typeof decoded === "string") {
       return res.status(401).json({ message: "Invalid token" });
     }
     req.user = await userCollection.findById(decoded.userId);
