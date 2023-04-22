@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { userCollection } from "../models/user";
-import { User } from "../models/user";
+import { userCollection } from "../models/User";
+import { User } from "../models/User";
 
 export interface AuthenticatedRequest extends Request {
   user: User;

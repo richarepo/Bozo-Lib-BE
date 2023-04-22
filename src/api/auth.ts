@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { signinValidation, signupValidation } from "../validation/auth";
 import jwt from "jsonwebtoken";
-import { userCollection } from "../models/user";
+import { userCollection } from "../models/User";
 import bcrypt from "bcrypt";
 
 export const signup = async (req: Request, res: Response) => {
@@ -10,11 +10,13 @@ export const signup = async (req: Request, res: Response) => {
     if (joiResponse.error) {
       return res.status(400).send(joiResponse.error);
     }
+    const isUserPresent = await userCollection.findOne({email: req.body.email});
+    if (isUserPresent) {
+      return res.status(400).send('User already exists');
+    }
     const hashedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-    const user = await new userCollection({email: req.body.email, password: hashedPassword}).save();
-    const token = jwt.sign({ userId: user._id }, "secret", {expiresIn: "1h"})
-    res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: "strict" });
-    return res.status(200).send({token});
+    await new userCollection({email: req.body.email, password: hashedPassword}).save();
+    return res.status(201).send("User has been successfully created.");
   } catch (err: any) {
     return res.status(500).send({"error": err});
   }
@@ -27,10 +29,13 @@ export const signin = async (req: Request, res: Response) => {
       return res.status(400).send(joiResponse.error);
     }
     const user = await userCollection.findOne({email: req.body.email,});
+    if (!user) {
+      return res.status(400).send('User does not exist');
+    }
     const isPasswordMatch = bcrypt.compareSync(req.body.password, user.password);
     if (!isPasswordMatch) return res.status(400).send({"error": "Email/Password does not match"});
     const token = jwt.sign({ userId: user._id }, "secret", {expiresIn: "1h"})
-    res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: "strict" }); 
+    res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 60 * 60 }); 
     return res.status(200).send({token});
   } catch (err: any) {
     return res.status(500).send({"error": err});

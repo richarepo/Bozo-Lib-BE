@@ -1,7 +1,9 @@
 import express from 'express';
 import dbConnection from './db/connection';
+import * as dotenv from 'dotenv';
+dotenv.config()
+
 const app = express();
-const port = 8000;
 import mainRoute from "./routes/index";
 
 app.use(express.json());
@@ -11,6 +13,6 @@ dbConnection.once('open', (err) => {
   if (err) throw err;
 });
 
-app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
+app.listen(process.env.PORT, () => {
+  return console.log(`Express is listening at http://localhost:${process.env.PORT}`);
 });
