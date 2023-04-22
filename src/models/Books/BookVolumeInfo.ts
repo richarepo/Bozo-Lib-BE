@@ -9,15 +9,19 @@ export interface IVolumeInfo extends mongoose.Document {
   publisher: string;
   averageRating: number;
   ratingsCount: number;
-  imageLinks: IBookImageLinks;
+  imageLinks: IBookImageLinks | mongoose.ObjectId;
   language: string;
 }
 
 const volumeInfoSchema = new mongoose.Schema({
   title: String,
+  bookId: {
+    type: String,
+    required: true,
+  },
   description: String,
   authors: [String],
-  publishedDate: String,
+  publishedDate: Date,
   publisher: String,
   averageRating: Number,
   ratingsCount: Number,
@@ -28,4 +32,4 @@ const volumeInfoSchema = new mongoose.Schema({
   language: String,
 });
 
-export default mongoose.model<IVolumeInfo>('VolumeInfo', volumeInfoSchema);
+export default mongoose.model<IVolumeInfo>('BookVolumeInfo', volumeInfoSchema);

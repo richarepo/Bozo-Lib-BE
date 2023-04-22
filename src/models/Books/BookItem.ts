@@ -4,13 +4,13 @@ import { IVolumeInfo } from './BookVolumeInfo';
 export interface IBookItem extends mongoose.Document {
   kind: string;
   id: string;
-  VolumeInfo: IVolumeInfo;
+  BookVolumeInfo: IVolumeInfo;
 }
 
 const bookItemSchema = new mongoose.Schema({
   kind: String,
   id: String,
-  VolumeInfo: {
+  BookVolumeInfo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'BookVolumeInfo',
   },

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dbConnection from '../db/connection'
 
-export interface User extends Document {
+export interface User extends mongoose.Document {
   name: string;
   email: string;
   password: string;
