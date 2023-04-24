@@ -7,7 +7,7 @@
 3. Install the required packages: `npm install`
 4. Ru Server: `npm start`
 
-## API"S
+## API'S
 
 1. http://localhost:8000/signup
 2. http://localhost:8000/signin
