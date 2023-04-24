@@ -32,11 +32,12 @@ export const searchBooksByIDs = async (req: AuthenticatedRequest, res: Response)
       return res.status(400).json(joiResponse.error.details[0].message);
     }
     const books = [];
-    for (let id of bookIDs) {
-      const url = `${GOOGLE_SEARCH_URL}/${id}&key=${process.env.GOOGLE_API_KEY}`;
+    for (let i = 0; i <= bookIDs.length; i++) {
+      const id = bookIDs[i];
+      const url = `${GOOGLE_SEARCH_URL}/${id.toString()}?key=${process.env.GOOGLE_API_KEY}`;
       const response = await axios.get(url);
       if (!response.data) return res.status(404).json({ error: "Book Not Found!" });
-      bookIDs.push(response.data);
+      books.push(response.data);
     }
     return res.status(200).json(books);
   } catch (err: any) {
