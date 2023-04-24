@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import dbConnection from '../../db/connection';
 import { IVolumeInfo } from './BookVolumeInfo';
 
 export interface IBookItem extends mongoose.Document {
@@ -16,4 +17,4 @@ const bookItemSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model<IBookItem>('BookItem', bookItemSchema);
+export default dbConnection.model<IBookItem>('BookItem', bookItemSchema);

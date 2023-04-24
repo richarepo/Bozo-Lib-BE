@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import dbConnection from '../../db/connection';
 import { IBookImageLinks } from './BookImageLink';
 
 export interface IVolumeInfo extends mongoose.Document {
@@ -32,4 +33,4 @@ const volumeInfoSchema = new mongoose.Schema({
   language: String,
 });
 
-export default mongoose.model<IVolumeInfo>('BookVolumeInfo', volumeInfoSchema);
+export default dbConnection.model<IVolumeInfo>('BookVolumeInfo', volumeInfoSchema);

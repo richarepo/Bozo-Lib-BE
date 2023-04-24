@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import dbConnection from '../../db/connection';
 
 export interface IBookInfoSearchResponse extends mongoose.Document {
   kind: string;
@@ -10,4 +11,4 @@ const bookInfoSearchResponseSchema = new mongoose.Schema({
   totalItems: Number,
 });
 
-export default mongoose.model<IBookInfoSearchResponse>('BookInfoSearchResponse', bookInfoSearchResponseSchema);
+export default dbConnection.model<IBookInfoSearchResponse>('BookInfoSearchResponse', bookInfoSearchResponseSchema);

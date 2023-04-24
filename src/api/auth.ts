@@ -15,7 +15,7 @@ export const signup = async (req: Request, res: Response) => {
       return res.status(400).send('User already exists');
     }
     const hashedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-    await new userCollection({email: req.body.email, password: hashedPassword}).save();
+    await new userCollection({name: req.body.name, email: req.body.email, password: hashedPassword}).save();
     return res.status(201).send("User has been successfully created.");
   } catch (err: any) {
     return res.status(500).send({"error": err});
@@ -34,7 +34,7 @@ export const signin = async (req: Request, res: Response) => {
     }
     const isPasswordMatch = bcrypt.compareSync(req.body.password, user.password);
     if (!isPasswordMatch) return res.status(400).send({"error": "Email/Password does not match"});
-    const token = jwt.sign({ userId: user._id }, "secret", {expiresIn: "1h"})
+    const token = jwt.sign({ userId: user._id }, "secret", {expiresIn: "1h"});
     res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 60 * 60 }); 
     return res.status(200).send({token});
   } catch (err: any) {

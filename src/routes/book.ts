@@ -7,6 +7,6 @@ route.get("/search", searchBooksByKeyword);
 route.get("/bookids", searchBooksByIDs)
 
 route.get("/library", getBooksInLibrary);
-route.post("/library:bookId", addBookInLibrary);
+route.post("/library/:bookId", addBookInLibrary);
 
 export default route;

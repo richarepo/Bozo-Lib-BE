@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-
-interface IBookLibrary extends mongoose.Document {
+import dbConnection from '../../db/connection';interface IBookLibrary extends mongoose.Document {
   bookID: IBookLibrary | mongoose.ObjectId;
   userID: mongoose.ObjectId;
 }
@@ -8,7 +7,7 @@ interface IBookLibrary extends mongoose.Document {
 const bookLibrarySchema = new mongoose.Schema<IBookLibrary>({
   bookID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'BookLibrary',
+    ref: 'BookVolumeInfo',
   },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,6 +15,6 @@ const bookLibrarySchema = new mongoose.Schema<IBookLibrary>({
   }
 });
 
-const BookLibrary = mongoose.model<IBookLibrary>('BookLibrary', bookLibrarySchema);
+const BookLibrary = dbConnection.model<IBookLibrary>('BookLibrary', bookLibrarySchema);
 
 export default BookLibrary;

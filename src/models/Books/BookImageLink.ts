@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import dbConnection from '../../db/connection';
 
 export interface IBookImageLinks extends mongoose.Document {
   smallThumbnail: string;
@@ -30,4 +31,4 @@ const bookImageLinksSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model<IBookImageLinks>('BookImageLinks', bookImageLinksSchema);
+export default dbConnection.model<IBookImageLinks>('BookImageLinks', bookImageLinksSchema);
