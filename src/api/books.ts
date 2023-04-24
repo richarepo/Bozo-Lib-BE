@@ -9,12 +9,12 @@ import BookImageLink from "../models/Books/BookImageLink";
 
 export const searchBooksByKeyword = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const joiResponse = searchQueryValidation({ query: req.query.query });
+    const joiResponse = searchQueryValidation({ query: req.query.search });
     if (joiResponse.error) {
       return res.status(400).json(joiResponse.error.details[0].message);
     }
     const limit = Number(req.body.limit || 10);
-    const url = `${GOOGLE_SEARCH_URL}?q=${req.query.query.toString().replace(/\s{2,}/g, ' ').trim()}&maxResults=${limit}&key=${process.env.GOOGLE_API_KEY}`;
+    const url = `${GOOGLE_SEARCH_URL}?q=${req.query.search.toString().replace(/\s{2,}/g, ' ').trim()}&maxResults=${limit}&key=${process.env.GOOGLE_API_KEY}`;
     const response = await axios.get(url);
     return res.status(200).json(response.data);
   } catch (err: any) {
@@ -76,17 +76,18 @@ export const addBookInLibrary = async (req: AuthenticatedRequest, res: Response)
   }
 }
 
-export const getBookInLibrary = async (req: AuthenticatedRequest, res: Response) => {
+export const getBooksInLibrary = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (req.query.id) {
       const book = await BookLibrary.findById(req.query.id);
       if (!book) return res.status(404).json({ error: "Book Not Found!" });
       return res.status(200).json(book);
-    } else if (req.query.query) {
+    } else if (req.query.search) {
+      if (req.query.search.toString().length < 3) return res.status(400).send({"error": "Search term should be at least 3 characters."});
       const books = await BookLibrary.find({
         $or: [
-          { title: req.query.query },
-          { description: req.query.query },
+          { title: { $regex: req.query.search, $options: 'i' } },
+          { description: { $regex: req.query.search, $options: 'i' } },
         ],
         userId: req.user.id,
       }).populate('BookId').populate('imageLinks');
