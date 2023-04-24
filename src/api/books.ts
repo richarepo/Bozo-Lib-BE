@@ -11,16 +11,16 @@ export const searchBooksByKeyword = async (req: AuthenticatedRequest, res: Respo
   try {
     const joiResponse = searchQueryValidation({ query: req.query.search });
     if (joiResponse.error) {
-      return res.status(400).json(joiResponse.error.details[0].message);
+      return res.status(400).send({error: joiResponse.error.details[0].message});
     }
     const limit = Number(req.body.limit || 10);
     const url = `${GOOGLE_SEARCH_URL}?q=${req.query.search.toString().replace(/\s{2,}/g, ' ').trim()}&maxResults=${limit}&key=${process.env.GOOGLE_API_KEY}`;
     const response = await axios.get(url);
-    return res.status(200).json(response.data);
+    return res.status(200).send({data: response.data});
   } catch (err: any) {
     console.log(err);
     const errCode = err.response && err.response.status ? err.response.status : 500;
-    return res.status(errCode).json({ error: err.message });
+    return res.status(errCode).send({ error: err.message });
   }
 }
 
@@ -29,20 +29,20 @@ export const searchBooksByIDs = async (req: AuthenticatedRequest, res: Response)
     const { bookIDs } = req.body
     const joiResponse = bookIDSValidation(req.body);
     if (joiResponse.error) {
-      return res.status(400).json(joiResponse.error.details[0].message);
+      return res.status(400).send({error: joiResponse.error.details[0].message});
     }
     const books = [];
     for (let id of bookIDs) {
       const url = `${GOOGLE_SEARCH_URL}/${id}?key=${process.env.GOOGLE_API_KEY}`;
       const response = await axios.get(url);
-      if (!response.data) return res.status(404).json({ error: "Book Not Found!" });
+      if (!response.data) return res.status(404).send({ error: "Book Not Found!" });
       books.push(response.data);
     }
-    return res.status(200).json(books);
+    return res.status(200).send({data: books});
   } catch (err: any) {
     console.log(err);
     const errCode = err.response && err.response.status ? err.response.status : 500;
-    return res.status(errCode).json({ error: err.message });
+    return res.status(errCode).send({ error: err.message });
   }
 }
 
@@ -51,7 +51,7 @@ export const addBookInLibrary = async (req: AuthenticatedRequest, res: Response)
     const { bookId } = req.params;
     const url = `${GOOGLE_SEARCH_URL}/${bookId}?key=${process.env.GOOGLE_API_KEY}`;
     const response = await axios.get(url);
-    if (!response.data) return res.status(404).json({ error: "Book Not Found!" });
+    if (!response.data) return res.status(404).send({ error: "Book Not Found!" });
     const imageLinks = await new BookImageLink(response.data.volumeInfo.imageLinks).save();
     const book = await new BookVolume({
       title: response.data.volumeInfo.title,  
@@ -69,11 +69,11 @@ export const addBookInLibrary = async (req: AuthenticatedRequest, res: Response)
       userID: req.user._id,
       bookID: book._id
     }).save();
-    return res.status(200).json({ message: "Book have been added in the Library" });
+    return res.status(200).send({ message: "Book have been added in the Library" });
   } catch (err) {
     console.log(err);
     const errCode =   err.response && err.response.status ? err.response.status : 500;
-    return res.status(errCode).json({ error: err.message });
+    return res.status(errCode).send({ error: err.message });
   }
 }
 
@@ -81,8 +81,8 @@ export const getBooksInLibrary = async (req: AuthenticatedRequest, res: Response
   try {
     if (req.query.id) {
       const book = await BookLibrary.findById(req.query.id);
-      if (!book) return res.status(404).json({ error: "Book Not Found!" });
-      return res.status(200).json(book);
+      if (!book) return res.send(404).send({ error: "Book Not Found!" });
+      return res.status(200).send({data: book});
     } else if (req.query.search) {
       if (req.query.search.toString().length < 3) return res.status(400).send({"error": "Search term should be at least 3 characters."});
       const books = await BookLibrary.find({
@@ -92,8 +92,8 @@ export const getBooksInLibrary = async (req: AuthenticatedRequest, res: Response
         ],
         userId: req.user.id,
       }).populate('bookID').populate('imageLinks');
-      if (books) return res.status(200).json({ "data": books });
-      else return res.status(404).json({ error: "Book Not Found!" });
+      if (books) return res.status(200).send({ "data": books });
+      else return res.status(404).send({ error: "Book Not Found!" });
     } else {
       const limit = Number(req.query.limit || 10);
       const books = await BookLibrary.find({}).populate({
@@ -101,11 +101,11 @@ export const getBooksInLibrary = async (req: AuthenticatedRequest, res: Response
         populate: {
           path: 'imageLinks'
         }
-      });
-      return res.status(200).json({books: books});
+      }).limit(limit);
+      return res.status(200).send({books: books});
     }
   } catch (err) {
     const errCode = err.response && err.response.status ? err.response.status : 500;
-    return res.status(errCode).json({ error: err.message });
+    return res.status(errCode).send({ error: err.message });
   }
 }

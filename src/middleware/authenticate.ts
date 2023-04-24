@@ -10,11 +10,11 @@ export interface AuthenticatedRequest extends Request {
 const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const token = req.headers['authorization'];
   if (!token) {
-    return res.status(401).json({ message: "No token provided" });
+    return res.status(401).send({ message: "No token provided" });
   }
   jwt.verify(token, "secret", async (err: any, decoded: JwtPayload | string) => {
     if (err || !decoded || typeof decoded === "string") {
-      return res.status(401).json({ message: "Invalid token" });
+      return res.status(401).send({ message: "Invalid token" });
     }
     req.user = await userCollection.findById(decoded.userId);
     next();

@@ -8,15 +8,15 @@ export const signup = async (req: Request, res: Response) => {
   try {
     const joiResponse = signupValidation(req.body);
     if (joiResponse.error) {
-      return res.status(400).send(joiResponse.error);
+      return res.status(400).send({error: joiResponse.error.details[0].message});
     }
     const isUserPresent = await userCollection.findOne({email: req.body.email});
     if (isUserPresent) {
-      return res.status(400).send('User already exists');
+      return res.status(400).send({error: 'User not found'});
     }
     const hashedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     await new userCollection({name: req.body.name, email: req.body.email, password: hashedPassword}).save();
-    return res.status(201).send("User has been successfully created.");
+    return res.status(201).send({message: "User has been successfully created."});
   } catch (err: any) {
     return res.status(500).send({"error": err});
   }
@@ -30,7 +30,7 @@ export const signin = async (req: Request, res: Response) => {
     }
     const user = await userCollection.findOne({email: req.body.email,});
     if (!user) {
-      return res.status(400).send('User does not exist');
+      return res.status(400).send({error: 'User does not exist'});
     }
     const isPasswordMatch = bcrypt.compareSync(req.body.password, user.password);
     if (!isPasswordMatch) return res.status(400).send({"error": "Email/Password does not match"});
