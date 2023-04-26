@@ -34,7 +34,7 @@ export const signin = async (req: Request, res: Response) => {
     }
     const isPasswordMatch = bcrypt.compareSync(req.body.password, user.password);
     if (!isPasswordMatch) return res.status(400).send({"error": "Email/Password does not match"});
-    const token = jwt.sign({ userId: user._id }, "secret");
+    const token = jwt.sign({ userId: user._id }, "secret", {algorithm: 'HS256'});
     res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: "strict" }); 
     return res.status(200).send({token});
   } catch (err: any) {
