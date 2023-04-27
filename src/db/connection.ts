@@ -7,7 +7,7 @@ const dbConnection = mongoose.createConnection(process.env.DATABASE_URL)
     console.log("Error while connecting to database:", err);
   })
   .once("open", () => {
-    console.log("Connected to database:", "JWTNODE");
+    console.log("Connected to database:", process.env.DATABASE_NAME)
   });
 
 export default dbConnection;
