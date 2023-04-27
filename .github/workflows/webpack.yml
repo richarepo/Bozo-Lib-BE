@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - master
+    if: "!contains(github.event.head_commit.message, 'Merge pull request')"
   pull_request:
     branches:
       - master
+    types:
+      - closed
 
 jobs:
   build:
@@ -40,6 +43,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           tags: ${{ secrets.DOCKER_USERNAME }}/libdocker:latest
