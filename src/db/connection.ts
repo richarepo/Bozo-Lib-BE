@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-const dbConnection = mongoose.createConnection("mongodb://localhost:27017/JWTNODE")
+const dbConnection = mongoose.createConnection(process.env.DATABASE_URL)
   .on("error", (err) => {
     console.log("Error while connecting to database:", err);
   })

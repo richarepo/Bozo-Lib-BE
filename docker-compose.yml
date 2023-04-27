@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  libbe:
+    build: ./
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=mongodb://libdb/JWTNODE
+  libdb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - /home/$USER/libdb:/data/db
+
+volumes:
+  libdb:

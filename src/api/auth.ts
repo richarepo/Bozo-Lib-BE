@@ -12,7 +12,7 @@ export const signup = async (req: Request, res: Response) => {
     }
     const isUserPresent = await userCollection.findOne({email: req.body.email});
     if (isUserPresent) {
-      return res.status(400).send({error: 'User not found'});
+      return res.status(400).send({error: 'User already present'});
     }
     const hashedPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     await new userCollection({name: req.body.name, email: req.body.email, password: hashedPassword}).save();
