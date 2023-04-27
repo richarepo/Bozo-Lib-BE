@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Setup Docker Compose
-        uses: docker/compose-action@v2
+        uses: docker/compose@latest
         with:
           compose-file: docker-compose.yaml
           compose-command: build
