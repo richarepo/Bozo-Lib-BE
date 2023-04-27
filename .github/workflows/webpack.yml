@@ -42,7 +42,8 @@ jobs:
       - name: Push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          image: oyepuru/libdocker
+          tags: ${{ secrets.DOCKER_USERNAME }}/libdocker:latest
+          image: oyepuru/libdocker:latest
           context: .
           push: true
           labels: ${{ steps.meta.outputs.labels }}
